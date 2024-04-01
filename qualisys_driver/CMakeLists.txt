@@ -45,7 +45,6 @@ set(dependencies
 
 include_directories(
   include
-  ${QUALISYSSDK_INCLUDE_DIR}
 )
 
 add_library(${PROJECT_NAME} STATIC src/qualisys_driver.cpp)
