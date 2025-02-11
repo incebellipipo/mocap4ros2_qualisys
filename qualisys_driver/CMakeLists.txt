@@ -27,7 +27,7 @@ if (NOT TARGET qualisys_cpp_sdk)
   message(STATUS "${PROJECT_NAME}: `qualisys_cpp_sdk` targets not found. Attempting to fetch contents...")
   FetchContent_Declare(
     qualisys_cpp_sdk
-    GIT_REPOSITORY https://github.com/qualisys/qualisys_cpp_sdk
+    GIT_REPOSITORY https://github.com/incebellipipo/qualisys_cpp_sdk
     GIT_TAG        master
   )
   FetchContent_MakeAvailable(qualisys_cpp_sdk)
