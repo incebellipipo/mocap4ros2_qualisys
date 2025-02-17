@@ -12,9 +12,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}/cmake/modules")
-set(QUALISYS_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/qualisys_cpp_sdk")
 
-find_package(QUALISYSSDK REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
@@ -23,6 +21,19 @@ find_package(tf2_ros REQUIRED)
 find_package(mocap4r2_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
+
+include(FetchContent)
+if (NOT TARGET qualisys_cpp_sdk)
+  message(STATUS "${PROJECT_NAME}: `qualisys_cpp_sdk` targets not found. Attempting to fetch contents...")
+  FetchContent_Declare(
+    qualisys_cpp_sdk
+    GIT_REPOSITORY https://github.com/incebellipipo/qualisys_cpp_sdk
+    GIT_TAG        master
+  )
+  FetchContent_MakeAvailable(qualisys_cpp_sdk)
+else()
+  message(STATUS "qualisys_cpp_sdk: `qualisys_cpp_sdk` targets found.")
+endif()
 
 set(dependencies
   rclcpp
@@ -34,15 +45,10 @@ set(dependencies
 
 include_directories(
   include
-  ${QUALISYSSDK_INCLUDE_DIR}
 )
 
 add_library(${PROJECT_NAME} STATIC src/qualisys_driver.cpp)
 ament_target_dependencies(${PROJECT_NAME} ${dependencies})
-
-add_library(qualisys_cpp_sdk STATIC IMPORTED)
-set_target_properties(qualisys_cpp_sdk PROPERTIES
-    IMPORTED_LOCATION ${QUALISYSSDK_LIBRARY})
 
 add_executable(qualisys_driver_main
   src/qualisys_driver_main.cpp
