@@ -131,7 +131,7 @@ void QualisysDriver::process_packet(CRTPacket * const packet)
 
   if (mocap_markers_pub_->get_subscription_count() > 0) {
     mocap4r2_msgs::msg::Markers markers_msg;
-    markers_msg.header.frame_id = "map";
+    markers_msg.header.frame_id = frame_id_;
     markers_msg.header.stamp = rclcpp::Clock().now();
     markers_msg.frame_number = frame_number;
 
@@ -153,7 +153,7 @@ void QualisysDriver::process_packet(CRTPacket * const packet)
 
   if (mocap_rigid_bodies_pub_->get_subscription_count() > 0) {
     mocap4r2_msgs::msg::RigidBodies msg_rb;
-    msg_rb.header.frame_id = "map";
+    msg_rb.header.frame_id = frame_id_;
     msg_rb.header.stamp = rclcpp::Clock().now();
     msg_rb.frame_number = frame_number;
 
@@ -255,8 +255,7 @@ CallbackReturnT QualisysDriver::on_activate(const rclcpp_lifecycle::State &)
   bool success = connect_qualisys();
 
   if (success) {
-    timer_ = this->create_wall_timer(100ms, std::bind(&QualisysDriver::loop, this));
-
+    timer_ = this->create_wall_timer(std::chrono::milliseconds(1000 / publish_rate_), std::bind(&QualisysDriver::loop, this));
     RCLCPP_INFO(get_logger(), "Activated!\n");
 
     return CallbackReturnT::SUCCESS;
@@ -343,6 +342,8 @@ void QualisysDriver::initParameters()
   declare_parameter<std::string>("qos_reliability_policy", "best_effort");
   declare_parameter<int>("qos_depth", 10);
   declare_parameter<bool>("use_markers_with_id", true);
+  declare_parameter<int>("publish_rate", 10);
+  declare_parameter<std::string>("frame_id", "map");
 
   get_parameter<std::string>("host_name", host_name_);
   get_parameter<int>("port", port_);
@@ -353,32 +354,18 @@ void QualisysDriver::initParameters()
   get_parameter<std::string>("qos_reliability_policy", qos_reliability_policy_);
   get_parameter<int>("qos_depth", qos_depth_);
   get_parameter<bool>("use_markers_with_id", use_markers_with_id_);
+  get_parameter<int>("publish_rate", publish_rate_);
+  get_parameter<std::string>("frame_id", frame_id_);
 
-  RCLCPP_INFO(
-    get_logger(),
-    "Param host_name: %s", host_name_.c_str());
-  RCLCPP_INFO(
-    get_logger(),
-    "Param port: %d", port_);
-  RCLCPP_INFO(
-    get_logger(),
-    "Param last_frame_number: %d", last_frame_number_);
-  RCLCPP_INFO(
-    get_logger(),
-    "Param frame_count: %d", frame_count_);
-  RCLCPP_INFO(
-    get_logger(),
-    "Param dropped_frame_count: %d", dropped_frame_count_);
-  RCLCPP_INFO(
-    get_logger(),
-    "Param qos_history_policy: %s", qos_history_policy_.c_str());
-  RCLCPP_INFO(
-    get_logger(),
-    "Param qos_reliability_policy: %s", qos_reliability_policy_.c_str());
-  RCLCPP_INFO(
-    get_logger(),
-    "Param qos_depth: %d", qos_depth_);
-  RCLCPP_INFO(
-    get_logger(),
-    "Param use_markers_with_id: %s", use_markers_with_id_ ? "true" : "false");
+  RCLCPP_INFO(get_logger(), "Param host_name: %s", host_name_.c_str());
+  RCLCPP_INFO(get_logger(), "Param port: %d", port_);
+  RCLCPP_INFO(get_logger(), "Param last_frame_number: %d", last_frame_number_);
+  RCLCPP_INFO(get_logger(), "Param frame_count: %d", frame_count_);
+  RCLCPP_INFO(get_logger(), "Param dropped_frame_count: %d", dropped_frame_count_);
+  RCLCPP_INFO(get_logger(), "Param qos_history_policy: %s", qos_history_policy_.c_str());
+  RCLCPP_INFO(get_logger(), "Param qos_reliability_policy: %s", qos_reliability_policy_.c_str());
+  RCLCPP_INFO(get_logger(), "Param qos_depth: %d", qos_depth_);
+  RCLCPP_INFO(get_logger(), "Param use_markers_with_id: %s", use_markers_with_id_ ? "true" : "false");
+  RCLCPP_INFO(get_logger(), "Param publish_rate: %d", publish_rate_);
+  RCLCPP_INFO(get_logger(), "Param frame_id: %s", frame_id_.c_str());
 }

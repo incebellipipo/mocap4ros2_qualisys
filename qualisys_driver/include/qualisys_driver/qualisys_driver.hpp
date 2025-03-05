@@ -97,6 +97,8 @@ private:
   int dropped_frame_count_;
   int n_markers_;
   int n_unlabeled_markers_;
+  int publish_rate_;
+  std::string frame_id_;
   std::shared_ptr<rclcpp::Client<lifecycle_msgs::srv::ChangeState>> client_change_state_;
   rclcpp_lifecycle::LifecyclePublisher<mocap4r2_msgs::msg::Markers>::SharedPtr mocap_markers_pub_;
   rclcpp_lifecycle::LifecyclePublisher<mocap4r2_msgs::msg::RigidBodies>::SharedPtr
