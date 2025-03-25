@@ -4,13 +4,20 @@
 
 [![codecov](https://codecov.io/gh/MOCAP4ROS2-Project/mocap_optitrack_driver/main/graph/badge.svg)](https://codecov.io/gh/MOCAP4ROS2-Project/mocap_optitrack_driver)
 
-Requisites: qualisys_cpp_skd
+Requisites: qualisys_cpp_sdk
+
+>[!IMPORTANT]
+>Currently, only `rt_protocol_1.23` is supported.
 
 Create workspace:
 ```
 mkdir -p mocap_ws/src && cd mocap_ws/src
 ```
-Download qualisys repo recursively to get https://github.com/qualisys/qualisys_cpp_sdk, or set QualisysSDK_PATH:
+Download qualisys repo recursively to get https://github.com/qualisys/qualisys_cpp_sdk, or set QualisysSDK_PATH.
+
+>[!NOTE]
+>CMake downloads and installs qualisys sdk automatically using fetch content.
+
 ```
 git clone --recursive https://github.com/MOCAP4ROS2-Project/mocap4ros2_qualisys.git
 ```
